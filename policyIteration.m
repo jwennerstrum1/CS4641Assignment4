@@ -61,6 +61,7 @@ policy(wallNum) = 5;
 for i = 1 : numStates
    curState = states(i, :);
    
+   
     
 end
 
