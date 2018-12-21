@@ -1,6 +1,5 @@
 function policyIteration(map, varargin)
 
-alpha = 0.9;
 %% set up map
 map = [1, 0, 0, 0; ...
        0, 1, 0, 0; ...
@@ -74,16 +73,22 @@ end
 
 
 %% policy extraction
-    function val = findValue(up, right, down, left)        
+    function val = findValue(up, right, down, left)
+        neighbors = [
+            up(1).*r - up(2) + 1;
+            right(1).*r - right(2) + 1;
+            down(1).*r - down(2) + 1;
+            left(1).*r - left(2) + 1;];
+        
         val = zeros(1, 4);
         
-        curValue = valueArray(curState(1), curState(2));
-        curPolicy = policy(curState(1), curState(2));
-        neighbors1 = [up; right; down; left];
+        curValue = valueArray(curState);
+        curPolicy = policy(curState);
+        neighbors1 = [up, right, down, left];
                 
         for ii = 1 : 4
             try
-                tempValue = alpha * valueArray(neighbors1(ii, 1), neighbors1(ii, 2));
+                tempValue = valueArray(neighbors1(ii));
                 if tempValue > curValue
                     curValue = tempValue;
                     curPolicy = ii;                   
@@ -93,7 +98,20 @@ end
         
         valueArray(curState) = curValue;
         policy(curState) = curPolicy;
+%         numUp = up(1).*r - up(2) + 1;
+%         numRight = right(1).*r - right(2) + 1;
+%         numDown = down(1).*r - down(2) + 1;
+%         numLeft = left(1).*r - left(2) + 1;
+             
+        for ii = 1:4
+           if any(wallNum == neighbors(ii))
+               break
+           end
+           if up(1) > r
+               
+        end
 
+        val = [1,1];
     end
 
 end
