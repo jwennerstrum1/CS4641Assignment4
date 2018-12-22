@@ -1,6 +1,7 @@
-function policyIteration(map, varargin)
+function policyIteration()
 
 alpha = 0.9;
+
 %% set up map
 map = [1, 0, 0, 0; ...
        0, 1, 0, 0; ...
@@ -40,12 +41,16 @@ walls(:,2) = r - mod(wallNum, r) + 1;
 walls(walls == r + 1) = 1;
 
 %% set up value array with term and custom states
-valueArray = zeros(r, c) + defaultVal;
+valueArray = zeros(r,c);    % initialize all values to zero
+
+rewardArray = zeros(r, c) + defaultVal;
 if ~isempty(termStates)
-    valueArray(termStates(:,1).*r - termStates(:,2) + 1) = termRewards;
+    % set the terminal states to have terminal rewards
+    rewardArray(termStates(:,1).*r - termStates(:,2) + 1) = termRewards;
 end
 if ~isempty(customStates)
-    valueArray(customStates(:,1).*r - customStates(:,2) + 1) = customRewards;
+    % set the custom states to have custom rewards
+    rewardArray(customStates(:,1).*r - customStates(:,2) + 1) = customRewards;
 end
 
 %% Create policy array
@@ -83,7 +88,8 @@ end
                 
         for ii = 1 : 4
             try
-                tempValue = alpha * valueArray(neighbors1(ii, 1), neighbors1(ii, 2));
+                tempValue = rewardArray(neighbors1(ii, 1), neighbors(ii, 2)) + ...
+                    alpha * valueArray(neighbors1(ii, 1), neighbors1(ii, 2));
                 if tempValue > curValue
                     curValue = tempValue;
                     curPolicy = ii;                   
@@ -91,9 +97,35 @@ end
             end
         end
         
-        valueArray(curState) = curValue;
-        policy(curState) = curPolicy;
+        rewardArray(curState(1), curState(2)) = curValue;
+        policy(curState(1), curState(2)) = curPolicy;
 
+    end
+
+    function printPolicy(policy)
+        for ii  = 1 : r
+            for jj = 1 : c
+                switch policy(ii, jj)
+                    case 1
+                        fprintf(' ^  ');
+                    case 2
+                        fprintf(' >  ');
+                    case 3
+                        fprintf(' \/ ');
+                    case 4
+                        fprintf(' <  ');
+                    case 5
+                        fprintf(' *  ');
+                end
+                fprintf('\n');
+            end
+        end        
+    end
+
+    function transition(action)
+        
+        
+        
     end
 
 end
